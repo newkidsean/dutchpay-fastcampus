@@ -1,9 +1,11 @@
 import React from 'react'
+import AddExpenseFrom from './AddExpenseFrom'
 
 const ExpenseMain = () => {
   return (
     <div>ExpenseMain
       <div>
+        <AddExpenseFrom />
         {/* 비용추가 */}
         {/* 정산 결과 컴포넌트 렌더링 */}
       </div>
