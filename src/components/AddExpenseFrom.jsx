@@ -117,6 +117,7 @@ const AddExpenseFrom = () => {
                 onChange={({ target }) => setPayer(target.value)}
               >
                 <option disabled value=''>누가 결제했나요?</option>
+                <option>영수</option>
                 {members.map(member =>
                   <option key={member} value={member}>{member}</option>
                 )}
@@ -135,7 +136,7 @@ const AddExpenseFrom = () => {
         </Row>
 
       </Form >
-    </StyledWrapper>
+    </StyledWrapper >
   )
 }
 
