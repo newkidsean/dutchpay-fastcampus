@@ -6,16 +6,23 @@ import React, { useState } from 'react'
 import { Row } from 'react-bootstrap'
 import { groupNameState } from '../state/groupName';
 import styled from 'styled-components'
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../routes";
 
 const Addmembers = () => {
   const [groupMembers, setGroupMembers] = useRecoilState(groupMembersState);
   const groupName = useRecoilValue(groupNameState);
   const [validated, setValidated] = useState(false);
+  const navigate = useNavigate();
+
   const TITLE = `${groupName} 그룹에 속한 사함들의 이름을 모두 적어 주세요.`;
 
   const handleSubmit = (event) => {
     event.preventDefault();
     setValidated(true);
+    if (groupMembers.length > 0) {
+      navigate(`${ROUTES.EXPENSE_MAIN}`)
+    }
   };
 
   return (
