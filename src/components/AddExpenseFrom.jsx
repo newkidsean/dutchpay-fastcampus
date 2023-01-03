@@ -117,7 +117,6 @@ const AddExpenseFrom = () => {
                 onChange={({ target }) => setPayer(target.value)}
               >
                 <option disabled value=''>누가 결제했나요?</option>
-                <option>영수</option>
                 {members.map(member =>
                   <option key={member} value={member}>{member}</option>
                 )}
@@ -169,7 +168,7 @@ const StyledFormGroup = styled(Form.Group)`
     }
   }
 `
-const StyledTitle = styled.h3`
+export const StyledTitle = styled.h3`
   color:#F8F9FA;
   text-align: center;
   font-weight: 700;

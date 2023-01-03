@@ -92,5 +92,22 @@ describe('비용 정산 메인 페이지', () => {
       const amountValue = within(expenseListComponent).getByText('30000 원')
       expect(amountValue).toBeInTheDocument()
     })
+    test('정산 결과 또한 업데이트가 된다', async () => {
+      await addNewExpense();
+
+      const totalText = screen.getByText(/2명 - 총 30000 원 지출/i)
+      expect(totalText).toBeInTheDocument();
+
+      const transactionText = screen.getByText(/영희가 영수에게 15000원/i);
+      expect(transactionText).toBeInTheDocument();
+    })
+  })
+  describe('정산 결과 컴포넌트', () => {
+    test('정산 결과 컴포넌트가 렌더링 되는가', () => {
+      renderComponent()
+
+      const component = screen.getByText(/정산은 이렇게/i);
+      expect(component).toBeInTheDocument();
+    })
   })
 })

@@ -2,11 +2,12 @@ import React from 'react'
 import { Button, Container, Form, Row } from 'react-bootstrap';
 import styled from 'styled-components'
 import OverlayWrapper from './OverlayWrapper';
+import ServiceLogo from './ServiceLogo'
 
 const CenteredOverlayForm = ({ title, children, validated, handleSubmit }) => {
   return (
     <CentralizedContainer>
-      <StyledLogo>Dutch Pay</StyledLogo>
+      <ServiceLogo />
       <OverlayWrapper>
         <Container>
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
@@ -44,13 +45,6 @@ const CentralizedContainer = styled(Container)`
   width: 50vw;
   min-height: 100vh;
 `;
-
-const StyledLogo = styled.h1`
-  font-weight: 200;
-  letter-spacing: 10px;
-
-`;
-
 
 const StyledRow = styled(Row)`
   height: 60vh;

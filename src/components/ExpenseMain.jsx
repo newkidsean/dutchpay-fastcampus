@@ -5,6 +5,8 @@ import styled from 'styled-components'
 import AddExpenseFrom from './AddExpenseFrom'
 import ExpenseTable from './ExpenseTable'
 import { groupNameState } from '../state/groupName';
+import SettlementSummary from './SettlementSummary'
+import ServiceLogo from './shared/ServiceLogo'
 
 const ExpenseMain = () => {
   return (
@@ -24,15 +26,24 @@ const ExpenseMain = () => {
 const LeftPane = () => {
   return (
     <Container>
-      <AddExpenseFrom />
-
+      <StyledGapRow>
+        <Row>
+          <ServiceLogo />
+        </Row>
+        <Row>
+          <AddExpenseFrom />
+        </Row>
+        <Row>
+          <SettlementSummary />
+        </Row>
+      </StyledGapRow>
     </Container>
   )
 }
 const RightPane = () => {
   const groupName = useRecoilValue(groupNameState);
   return (
-    <StyledContainer>
+    <StyledRightPaneWrapper>
       <Row>
         <StyledGroupName>{groupName || 'Group Name'}</StyledGroupName>
       </Row>
@@ -40,13 +51,13 @@ const RightPane = () => {
         <ExpenseTable />
       </Row>
 
-    </StyledContainer>
+    </StyledRightPaneWrapper>
   )
 }
 
 export default ExpenseMain;
 
-const StyledContainer = styled(Container)`
+const StyledRightPaneWrapper = styled(Container)`
   padding: 100px 31px;
 `;
 
@@ -54,6 +65,12 @@ const StyledGroupName = styled.h2`
   margin-bottom: 80px;
   font-weight: 700;
   font-size: 48px;
-  line-height: 48px;
+  line-height: 45px;
   text-align: center;
-`
+`;
+
+const StyledGapRow = styled(Row)`
+  gap: 5vh;
+  padding-top: 100px;
+  justify-content: center;
+`;
