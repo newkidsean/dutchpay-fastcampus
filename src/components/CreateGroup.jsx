@@ -3,11 +3,15 @@ import CenteredOverlayForm from "./shared/CenteredOverlayForm";
 import { useSetRecoilState } from 'recoil';
 import { groupNameState } from "../state/groupName";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../routes";
 
 const CreateGroup = () => {
   const setGroupName = useSetRecoilState(groupNameState);
   const [validated, setValidated] = useState(false);
   const [validGroupName, setValidGroupName] = useState(false);
+  const navagate = useNavigate();
+
   const TITLE = '먼저, 더치 페이 할 그룹의 이름을 정해볼까요?'
 
   const handleSubmit = (event) => {
@@ -15,7 +19,8 @@ const CreateGroup = () => {
 
     const form = event.currentTarget;
     if (form.checkValidity()) {
-      setValidGroupName(true)
+      setValidGroupName(true);
+      navagate(`${ROUTES.ADD_MEMBERS}`);
     } else {
       event.stopPropagation();
       setValidGroupName(false);
