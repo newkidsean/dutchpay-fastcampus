@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useCallback, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { expensesState } from '../state/expenses';
 import { groupMembersState } from '../state/groupMembers';
 import { StyledTitle } from './AddExpenseFrom'
+import DownloadIcon from './assets/DownloadIcon';
+import { toJpeg } from 'html-to-image';
 
 export const calculateMinimumTransaction = (expenses, members, amountPerPerson) => {
   const minTransactions = [];
@@ -70,8 +72,10 @@ export const calculateMinimumTransaction = (expenses, members, amountPerPerson) 
   return minTransactions;
 }
 const SettlementSummary = () => {
+  const imgRef = useRef(null);
   const expenses = useRecoilValue(expensesState);
   const members = useRecoilValue(groupMembersState);
+  // const members = ['A', 'B', 'C', 'D'];
 
   const totalExpenseAmount = parseInt(expenses.reduce((prevAmount, curExpense) => prevAmount + parseInt(curExpense.amount), 0));
   const groupMembersCount = members.length;
@@ -79,9 +83,27 @@ const SettlementSummary = () => {
 
   const minimumTransaction = calculateMinimumTransaction(expenses, members, splitAmount);
 
+  const handleDownloadTransactionImg = useCallback(() => {
+    if (imgRef.current === null) return;
+
+    toJpeg(imgRef.current, { cacheBust: true, })
+      .then(dataUrl => {
+        const link = document.createElement('a');
+        link.download = 'transaction.jpeg';
+        link.href = dataUrl;
+        link.click();
+      })
+      .catch(err => console.log(err));
+  }, [imgRef])
+
   return (
-    <StyledWrapper>
-      <StyledTitle>2. 정산은 이렇게!</StyledTitle>
+    <StyledWrapper ref={imgRef}>
+      <StyledHeader>
+        <StyledTitle>2. 정산은 이렇게!</StyledTitle>
+        <div onClick={handleDownloadTransactionImg}>
+          <DownloadIcon />
+        </div>
+      </StyledHeader>
       {totalExpenseAmount > 0 && groupMembersCount > 0 && (
         <>
           <StyledSummary>
@@ -136,3 +158,15 @@ const StyledUl = styled.ul`
 const StyledSummary = styled.div`
   margin-top: 31px;
 `;
+
+const StyledHeader = styled.div`
+  display: flex;
+  align-items: baseline;
+
+  svg {
+    margin-left: 20px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+`
