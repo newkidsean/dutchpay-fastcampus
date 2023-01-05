@@ -6,6 +6,8 @@ import { groupMembersState } from '../state/groupMembers';
 import { StyledTitle } from './AddExpenseFrom'
 import DownloadIcon from './assets/DownloadIcon';
 import { toJpeg } from 'html-to-image';
+import { Button } from 'react-bootstrap';
+import { Download } from 'react-bootstrap-icons';
 
 export const calculateMinimumTransaction = (expenses, members, amountPerPerson) => {
   const minTransactions = [];
@@ -86,7 +88,10 @@ const SettlementSummary = () => {
   const handleDownloadTransactionImg = useCallback(() => {
     if (imgRef.current === null) return;
 
-    toJpeg(imgRef.current, { cacheBust: true, })
+    toJpeg(imgRef.current, {
+      cacheBust: true,
+      filter: (node) => node.tagName !== 'svg',
+    })
       .then(dataUrl => {
         const link = document.createElement('a');
         link.download = 'transaction.jpeg';
@@ -100,9 +105,10 @@ const SettlementSummary = () => {
     <StyledWrapper ref={imgRef}>
       <StyledHeader>
         <StyledTitle>2. 정산은 이렇게!</StyledTitle>
-        <div onClick={handleDownloadTransactionImg}>
-          <DownloadIcon />
-        </div>
+        <StyledButton data-testid='btn-download' onClick={handleDownloadTransactionImg}>
+          {/* <DownloadIcon /> */}
+          <Download />
+        </StyledButton>
       </StyledHeader>
       {totalExpenseAmount > 0 && groupMembersCount > 0 && (
         <>
@@ -168,5 +174,18 @@ const StyledHeader = styled.div`
     &:hover {
       cursor: pointer;
     }
+  }
+`
+
+const StyledButton = styled(Button)`
+  background: none;
+  border: none;
+  font-size: 25px;
+  position: absolute;
+  top: 15px;
+  right: 20px;
+
+  &:hover {
+    background: none;
   }
 `

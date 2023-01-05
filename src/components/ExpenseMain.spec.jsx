@@ -74,13 +74,15 @@ describe('비용 정산 메인 페이지', () => {
       const { dateInput, descInput, payerInput, amountInput, addButton } = renderComponent();
       await userEvent.type(dateInput, '2022-10-10')
       await userEvent.type(descInput, '장보기')
-      await userEvent.type(amountInput, '30000')
+      await userEvent.type(amountInput, '30000 원')
       await userEvent.selectOptions(payerInput, '영수');
       await userEvent.click(addButton);
 
     }
-    test('날짜, 내용, 결제자, 금액 데이터가 정산 리스트에 추가된다', async () => {
+    beforeEach(async () => {
       await addNewExpense();
+    })
+    test('날짜, 내용, 결제자, 금액 데이터가 정산 리스트에 추가된다', () => {
       const expenseListComponent = screen.getByTestId('expenseList');
       const dateValue = within(expenseListComponent).getByText('2022-10-10');
       expect(dateValue).toBeInTheDocument();
@@ -92,14 +94,26 @@ describe('비용 정산 메인 페이지', () => {
       const amountValue = within(expenseListComponent).getByText('30000 원')
       expect(amountValue).toBeInTheDocument()
     })
-    test('정산 결과 또한 업데이트가 된다', async () => {
-      await addNewExpense();
-
-      const totalText = screen.getByText(/2명 - 총 30000 원 지출/i)
+    test('정산 결과 또한 업데이트가 된다', () => {
+      const totalText = screen.getByText(/2 명이서 총 30000 원 지출/i)
       expect(totalText).toBeInTheDocument();
 
-      const transactionText = screen.getByText(/영희가 영수에게 15000원/i);
+      const transactionText = screen.getByText(/영희가 영수에게 15000 원/i);
       expect(transactionText).toBeInTheDocument();
+    })
+    const htmlToImage = require('html-to-image');
+    test('정산 결과를 이미지 파일로 저장할 수 있다', async () => {
+      const spiedToImage = jest.spyOn(htmlToImage, 'toJpeg');
+      const downloadButton = screen.getByTestId('btn-download');
+      expect(downloadButton).toBeInTheDocument();
+
+      await userEvent.click(downloadButton);
+
+      expect(spiedToImage).toHaveBeenCalledTimes(1)
+    })
+
+    afterEach(() => {
+      jest.resetAllMocks();
     })
   })
   describe('정산 결과 컴포넌트', () => {
