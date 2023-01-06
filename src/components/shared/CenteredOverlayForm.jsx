@@ -42,8 +42,12 @@ const CentralizedContainer = styled(Container)`
   align-items: center;
   padding: 0px;
   gap: 10px;
-  width: 50vw;
   min-height: 100vh;
+  width: 50vw;
+
+  @media (max-width: 500px) {
+    width: 80vw;
+  }
 `;
 
 const StyledRow = styled(Row)`
