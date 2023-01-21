@@ -24,7 +24,6 @@ const CreateGroup = () => {
       }
     })
       .then(({ data }) => {
-        console.log('data :', data);
         const { guid } = data
         setGroupId(guid)
         navagate(`${ROUTES.ADD_MEMBERS}`);

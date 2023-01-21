@@ -8,9 +8,12 @@ import { groupNameState } from '../state/groupName';
 import styled from 'styled-components'
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../routes";
+import { API } from "aws-amplify";
+import { groupIdState } from "../state/groupId";
 
 const Addmembers = () => {
   const [groupMembers, setGroupMembers] = useRecoilState(groupMembersState);
+  const guid = useRecoilValue(groupIdState);
   const groupName = useRecoilValue(groupNameState);
   const [validated, setValidated] = useState(false);
   const [groupMembersString, setGroupMembersString] = useState('')
@@ -18,10 +21,25 @@ const Addmembers = () => {
 
   const TITLE = `${groupName} 그룹에 속한 사함들의 이름을 모두 적어 주세요.`;
 
+  const saveGroupMembers = () => {
+    API.put('groupsApi', `/groups/${guid}/members`, {
+      body: {
+        members: groupMembers
+      }
+    })
+      .then(_response => {
+        navigate(ROUTES.EXPENSE_MAIN)
+      })
+      .catch(error => {
+        console.log(error.response);
+        alert(error.response.data.error)
+      })
+  }
   const handleSubmit = (event) => {
     event.preventDefault();
     setValidated(true);
     if (groupMembers.length > 0) {
+      saveGroupMembers();
       navigate(`${ROUTES.EXPENSE_MAIN}`)
     }
     //  삼성 인터넷이라 태그가 동작하지 않을 때
