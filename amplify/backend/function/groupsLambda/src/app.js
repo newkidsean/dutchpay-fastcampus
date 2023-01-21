@@ -55,87 +55,72 @@ const convertUrlType = (param, type) => {
   }
 }
 
-/********************************
- * HTTP Get method for list objects *
- ********************************/
-
-app.get(path + hashKeyPath, function (req, res) {
-  const condition = {}
-  condition[partitionKeyName] = {
-    ComparisonOperator: 'EQ'
-  }
-
-  if (req.apiGateway) {
-    condition[partitionKeyName]['AttributeValueList'] = [req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH];
-  } else {
-    try {
-      condition[partitionKeyName]['AttributeValueList'] = [convertUrlType(req.params[partitionKeyName], partitionKeyType)];
-    } catch (err) {
-      res.statusCode = 500;
-      res.json({ error: 'Wrong column type ' + err });
-    }
-  }
-
-  let queryParams = {
-    TableName: tableName,
-    KeyConditions: condition
-  }
-
-  dynamodb.query(queryParams, (err, data) => {
-    if (err) {
-      res.statusCode = 500;
-      res.json({ error: 'Could not load items: ' + err });
-    } else {
-      res.json(data.Items);
-    }
-  });
-});
-
 /*****************************************
- * HTTP Get method for get single object *
+ * HTTP Get method for reading group - 그룹 읽어오기 api *
  *****************************************/
 
-app.get(path + '/object' + hashKeyPath + sortKeyPath, function (req, res) {
-  const params = {};
-  if (req.apiGateway) {
-    params[partitionKeyName] = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
-  } else {
-    params[partitionKeyName] = req.params[partitionKeyName];
-    try {
-      params[partitionKeyName] = convertUrlType(req.params[partitionKeyName], partitionKeyType);
-    } catch (err) {
-      res.statusCode = 500;
-      res.json({ error: 'Wrong column type ' + err });
-    }
-  }
-  if (hasSortKey) {
-    try {
-      params[sortKeyName] = convertUrlType(req.params[sortKeyName], sortKeyType);
-    } catch (err) {
-      res.statusCode = 500;
-      res.json({ error: 'Wrong column type ' + err });
-    }
-  }
-
+app.get(path + hashKeyPath, function (req, res) {
   let getItemParams = {
     TableName: tableName,
-    Key: params
+    Key: { [partitionKeyName]: req.params[partitionKeyName] },
   }
 
   dynamodb.get(getItemParams, (err, data) => {
     if (err) {
-      res.statusCode = 500;
-      res.json({ error: 'Could not load items: ' + err.message });
+      res.statusCode = 500
+      res.json({ error: "Could not load items: " + err.message })
+    } else if (Object.keys(data).length === 0) {
+      res.statusCode = 404
+      res.json({ error: "Item not found" })
     } else {
-      if (data.Item) {
-        res.json(data.Item);
-      } else {
-        res.json(data);
-      }
+      res.json({ data: data.Item })
     }
-  });
-});
+  })
+})
 
+
+/*****************************************
+ * HTTP put method for adding expense to the group - 비용 추가 api *
+ *****************************************/
+
+app.put(`${path}${hashKeyPath}/expenses`, function (req, res) {
+  const guid = req.params[partitionKeyName]
+  const { expense } = req.body
+
+  if (
+    expense === null ||
+    expense === undefined ||
+    !expense.payer ||
+    !expense.amount
+  ) {
+    res.statusCode = 400
+    res.json({ error: "Invalid expense object" })
+    return
+  }
+
+  let updateItemParams = {
+    TableName: tableName,
+    Key: {
+      [partitionKeyName]: guid,
+    },
+    UpdateExpression:
+      "SET expenses = list_append(if_not_exists(expenses, :empty_list), :vals)",
+    ExpressionAttributeValues: {
+      ":vals": [expense],
+      ":empty_list": [],
+    },
+  }
+
+  dynamodb.update(updateItemParams, (err, data) => {
+    if (err) {
+      res.statusCode = 500
+      res.json({ error: err })
+    } else {
+      res.statusCode = 200
+      res.json({ data: data })
+    }
+  })
+})
 
 /************************************
 * HTTP put method for adding members to the group - 멤버추가 api *
