@@ -1,18 +1,39 @@
 import { Form } from "react-bootstrap";
 import CenteredOverlayForm from "./shared/CenteredOverlayForm";
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { groupNameState } from "../state/groupName";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../routes";
+import { API } from "aws-amplify";
+import { groupIdState } from "../state/groupId";
 
 const CreateGroup = () => {
-  const setGroupName = useSetRecoilState(groupNameState);
+  const [groupName, setGroupName] = useRecoilState(groupNameState);
   const [validated, setValidated] = useState(false);
   const [validGroupName, setValidGroupName] = useState(false);
+  const setGroupId = useSetRecoilState(groupIdState);
   const navagate = useNavigate();
 
   const TITLE = '먼저, 더치 페이 할 그룹의 이름을 정해볼까요?'
+
+  const saveGroupName = () => {
+    API.post('groupsApi', '/groups', {
+      body: {
+        groupName,
+      }
+    })
+      .then(({ data }) => {
+        console.log('data :', data);
+        const { guid } = data
+        setGroupId(guid)
+        navagate(`${ROUTES.ADD_MEMBERS}`);
+      })
+      .catch((error) => {
+        console.error(error)
+        alert(error.response.data.error)
+      })
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -20,7 +41,7 @@ const CreateGroup = () => {
     const form = event.currentTarget;
     if (form.checkValidity()) {
       setValidGroupName(true);
-      navagate(`${ROUTES.ADD_MEMBERS}`);
+      saveGroupName();
     } else {
       event.stopPropagation();
       setValidGroupName(false);
