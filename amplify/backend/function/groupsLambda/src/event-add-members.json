@@ -1,0 +1,8 @@
+{
+  "httpMethod": "PUT",
+  "path": "/groups/1c19f260-959d-11ed-b5cd-99068fbea9ad/members",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"members\":[\"C\", \"D\"]}"
+}
