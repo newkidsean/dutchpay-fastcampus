@@ -136,6 +136,48 @@ app.get(path + '/object' + hashKeyPath + sortKeyPath, function (req, res) {
   });
 });
 
+/*****************************************
+ * HTTP put method for adding expense to the group - 비용 추가 api *
+ *****************************************/
+
+app.put(`${path}${hashKeyPath}/expenses`, function (req, res) {
+  const guid = req.params[partitionKeyName]
+  const { expense } = req.body
+
+  if (
+    expense === null ||
+    expense === undefined ||
+    !expense.payer ||
+    !expense.amount
+  ) {
+    res.statusCode = 400
+    res.json({ error: "Invalid expense object" })
+    return
+  }
+
+  let updateItemParams = {
+    TableName: tableName,
+    Key: {
+      [partitionKeyName]: guid,
+    },
+    UpdateExpression:
+      "SET expenses = list_append(if_not_exists(expenses, :empty_list), :vals)",
+    ExpressionAttributeValues: {
+      ":vals": [expense],
+      ":empty_list": [],
+    },
+  }
+
+  dynamodb.update(updateItemParams, (err, data) => {
+    if (err) {
+      res.statusCode = 500
+      res.json({ error: err })
+    } else {
+      res.statusCode = 200
+      res.json({ data: data })
+    }
+  })
+})
 
 /************************************
 * HTTP put method for adding members to the group - 멤버추가 api *
