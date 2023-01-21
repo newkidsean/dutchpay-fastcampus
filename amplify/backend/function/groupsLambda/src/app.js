@@ -138,21 +138,35 @@ app.get(path + '/object' + hashKeyPath + sortKeyPath, function (req, res) {
 
 
 /************************************
-* HTTP put method for insert object *
+* HTTP put method for adding members to the group - 멤버추가 api *
 *************************************/
 
-app.put(path, function (req, res) {
-
-  let putItemParams = {
-    TableName: tableName,
-    Item: req.body
+app.put(`${path}${hashKeyPath}/members`, function (req, res) {
+  const guid = req.params[partitionKeyName];
+  const { members } = req.body;
+  if (members == null || !Array.isArray(members) || members.length === 0) {
+    res.statusCode = 400;
+    res.json({
+      error: 'Invalid members'
+    })
   }
-  dynamodb.put(putItemParams, (err, data) => {
+  let updateItemParams = {
+    TableName: tableName,
+    Key: {
+      [partitionKeyName]: guid,
+    },
+    UpdateExpression: "SET members = :members",
+    ExpressionAttributeValues: {
+      ":members": members,
+    },
+  }
+  dynamodb.update(updateItemParams, (err, data) => {
     if (err) {
       res.statusCode = 500;
-      res.json({ error: err, url: req.url, body: req.body });
+      res.json({ error: err });
     } else {
-      res.json({ success: 'put call succeed!', url: req.url, data: data })
+      res.statusCode = 200;
+      res.json({ data: data });
     }
   });
 });
