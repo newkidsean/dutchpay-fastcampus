@@ -20,7 +20,7 @@
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-amplify50403ae56dec4-staging-121127-deployment/amplify-cfn-templates/storage/groups-cloudformation-template.json",
         "logicalId": "storagegroups"
       },
-      "lastPushTimeStamp": "2023-01-21T07:35:35.111Z",
+      "lastPushTimeStamp": "2023-01-29T11:36:35.347Z",
       "output": {
         "PartitionKeyName": "guid",
         "Region": "us-east-2",
@@ -63,7 +63,7 @@
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-amplify50403ae56dec4-staging-121127-deployment/amplify-cfn-templates/function/groupsLambda-cloudformation-template.json",
         "logicalId": "functiongroupsLambda"
       },
-      "lastPushTimeStamp": "2023-01-21T07:35:35.932Z",
+      "lastPushTimeStamp": "2023-01-29T11:36:35.348Z",
       "output": {
         "Region": "us-east-2",
         "Arn": "arn:aws:lambda:us-east-2:875455526478:function:groupsLambda-staging",
@@ -92,7 +92,7 @@
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-amplify50403ae56dec4-staging-121127-deployment/amplify-cfn-templates/api/groupsApi-cloudformation-template.json",
         "logicalId": "apigroupsApi"
       },
-      "lastPushTimeStamp": "2023-01-21T07:35:35.120Z",
+      "lastPushTimeStamp": "2023-01-29T11:36:35.349Z",
       "output": {
         "ApiName": "groupsApi",
         "RootUrl": "https://w4r9xtp6o1.execute-api.us-east-2.amazonaws.com/staging",
