@@ -1,5 +1,0 @@
-{
-  "tableName": "groups",
-  "partitionKeyName": "guid",
-  "partitionKeyType": "S"
-}

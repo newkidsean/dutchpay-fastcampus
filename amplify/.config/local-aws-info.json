@@ -3,5 +3,10 @@
     "configLevel": "project",
     "useProfile": true,
     "profileName": "amplify-dutchpay"
+  },
+  "main": {
+    "configLevel": "project",
+    "useProfile": true,
+    "profileName": "amplify-dutchpay"
   }
 }

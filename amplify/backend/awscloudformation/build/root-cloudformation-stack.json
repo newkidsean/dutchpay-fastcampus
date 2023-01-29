@@ -1,5 +1,5 @@
 {
-  "Description": "Root Stack for AWS Amplify Console",
+  "Description": "Root Stack for AWS Amplify CLI",
   "AWSTemplateFormatVersion": "2010-09-09",
   "Parameters": {
     "DeploymentBucketName": {
@@ -149,62 +149,6 @@
         },
         "RoleName": {
           "Ref": "UnauthRoleName"
-        }
-      }
-    },
-    "storagegroups": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "TemplateURL": "https://s3.amazonaws.com/amplify-amplify50403ae56dec4-staging-121127-deployment/amplify-cfn-templates/storage/groups-cloudformation-template.json",
-        "Parameters": {
-          "tableName": "groups",
-          "partitionKeyName": "guid",
-          "partitionKeyType": "S",
-          "env": "staging"
-        }
-      }
-    },
-    "functiongroupsLambda": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "TemplateURL": "https://s3.amazonaws.com/amplify-amplify50403ae56dec4-staging-121127-deployment/amplify-cfn-templates/function/groupsLambda-cloudformation-template.json",
-        "Parameters": {
-          "deploymentBucketName": "amplify-amplify50403ae56dec4-staging-121127-deployment",
-          "s3Key": "amplify-builds/groupsLambda-7864673042356d7a447a-build.zip",
-          "storagegroupsName": {
-            "Fn::GetAtt": [
-              "storagegroups",
-              "Outputs.Name"
-            ]
-          },
-          "storagegroupsArn": {
-            "Fn::GetAtt": [
-              "storagegroups",
-              "Outputs.Arn"
-            ]
-          },
-          "env": "staging"
-        }
-      }
-    },
-    "apigroupsApi": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "TemplateURL": "https://s3.amazonaws.com/amplify-amplify50403ae56dec4-staging-121127-deployment/amplify-cfn-templates/api/groupsApi-cloudformation-template.json",
-        "Parameters": {
-          "functiongroupsLambdaName": {
-            "Fn::GetAtt": [
-              "functiongroupsLambda",
-              "Outputs.Name"
-            ]
-          },
-          "functiongroupsLambdaArn": {
-            "Fn::GetAtt": [
-              "functiongroupsLambda",
-              "Outputs.Arn"
-            ]
-          },
-          "env": "staging"
         }
       }
     }
