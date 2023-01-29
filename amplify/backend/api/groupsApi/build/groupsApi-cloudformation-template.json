@@ -368,7 +368,7 @@
         "Name": "groupsApi"
       }
     },
-    "groupsApiDefault4XXResponseec09ab71": {
+    "groupsApiDefault4XXResponse214175a9": {
       "Type": "AWS::ApiGateway::GatewayResponse",
       "Properties": {
         "ResponseType": "DEFAULT_4XX",
@@ -383,7 +383,7 @@
         }
       }
     },
-    "groupsApiDefault5XXResponseec09ab71": {
+    "groupsApiDefault5XXResponse214175a9": {
       "Type": "AWS::ApiGateway::GatewayResponse",
       "Properties": {
         "ResponseType": "DEFAULT_5XX",
@@ -398,7 +398,7 @@
         }
       }
     },
-    "DeploymentAPIGWgroupsApi3148a986": {
+    "DeploymentAPIGWgroupsApiaa8870c1": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -416,8 +416,8 @@
         }
       },
       "DependsOn": [
-        "groupsApiDefault4XXResponseec09ab71",
-        "groupsApiDefault5XXResponseec09ab71"
+        "groupsApiDefault4XXResponse214175a9",
+        "groupsApiDefault5XXResponse214175a9"
       ]
     }
   }
