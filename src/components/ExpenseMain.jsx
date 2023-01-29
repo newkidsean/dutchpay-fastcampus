@@ -8,9 +8,23 @@ import { groupNameState } from '../state/groupName';
 import SettlementSummary from './SettlementSummary'
 import ServiceLogo from './shared/ServiceLogo'
 import { useGroupData } from '../hooks/useGroupData'
+import { ShareFill } from 'react-bootstrap-icons'
 
 const ExpenseMain = () => {
   useGroupData();
+
+  const handleSharing = () => {
+    if (navigator.userAgent.match(/iphone|android/i) && navigator.share) {
+      navigator.share({
+        url: window.location.href
+      })
+    } else {
+      navigator.clipboard.writeText(window.location.href)
+        .then(() => {
+          alert('공유 링크가 클립보드에 복사되었습니다.')
+        })
+    }
+  }
 
   return (
     <Container fluid>
@@ -22,6 +36,9 @@ const ExpenseMain = () => {
           <RightPane />
         </Col>
       </Row>
+      <StyledShareButton data-testId='share-btn' onClick={handleSharing}>
+        <ShareFill />
+      </StyledShareButton>
     </Container>
   )
 }
@@ -77,3 +94,18 @@ const StyledGapRow = styled(Row)`
   padding-top: 100px;
   justify-content: center;
 `;
+
+const StyledShareButton = styled.div`
+  position: fixed;
+  width: 55px;
+  height: 55px;
+  right: 40px;
+  bottom: 45px;
+  border-radius: 50%;
+  background-color: #6B3DA6;
+  filter: drop-shadow(4px, 4px, 6px, rgba(0, 0, 0, 0.25));
+
+  color: #FFFFFF;
+  font-size: 30px;
+  text-align: center;
+`
