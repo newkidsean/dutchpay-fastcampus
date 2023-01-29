@@ -4,7 +4,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { groupNameState } from "../state/groupName";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ROUTES } from "../routes";
+import { ROUTES, ROUTE_UTILS } from "../routes";
 import { API } from "aws-amplify";
 import { groupIdState } from "../state/groupId";
 
@@ -26,7 +26,7 @@ const CreateGroup = () => {
       .then(({ data }) => {
         const { guid } = data
         setGroupId(guid)
-        navagate(`${ROUTES.ADD_MEMBERS}`);
+        navagate(ROUTE_UTILS.ADD_MEMBERS(guid));
       })
       .catch((error) => {
         console.error(error)
