@@ -4,11 +4,13 @@ import { groupMembersState, } from '../state/groupMembers';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { expensesState } from '../state/expenses';
 import styled from 'styled-components';
+import { API } from 'aws-amplify';
+import { groupIdState } from '../state/groupId';
 
 const AddExpenseFrom = () => {
   const [validated, setValidated] = useState(false);
   const members = useRecoilValue(groupMembersState);
-
+  const guid = useRecoilValue(groupIdState);
   const today = new Date();
   const [date, setDate] = useState(
     [today.getFullYear(), today.getMonth() + 1, today.getDate()].join('-')
@@ -37,6 +39,23 @@ const AddExpenseFrom = () => {
     return descValid && payerValid && amountValid;
   }
 
+  const saveExpense = (expense) => {
+    API.put('groupsApi', `/groups/${guid}/expenses`, {
+      body: {
+        expense
+      }
+    })
+      .then(_response => {
+        setExpense(expenses => [
+          ...expenses,
+          expense,
+        ])
+      }
+      )
+      .catch(_error => {
+        alert('비용 추가에 실패했습니다.')
+      })
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -45,10 +64,7 @@ const AddExpenseFrom = () => {
       const newExpense = {
         date, amount, desc, payer
       }
-      setExpense(expense => [
-        ...expense,
-        newExpense,
-      ])
+      saveExpense(newExpense);
     }
     setValidated(true);
   }
