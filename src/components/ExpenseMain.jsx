@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Col, Container, Row } from 'react-bootstrap'
+import { Col, Container, Row } from 'react-bootstrap'
 import { useRecoilValue } from 'recoil'
 import styled from 'styled-components'
 import AddExpenseFrom from './AddExpenseFrom'
@@ -8,6 +8,7 @@ import { groupNameState } from '../state/groupName';
 import SettlementSummary from './SettlementSummary'
 import ServiceLogo from './shared/ServiceLogo'
 import { useGroupData } from '../hooks/useGroupData'
+import { ShareFill } from 'react-bootstrap-icons'
 
 const ExpenseMain = () => {
   useGroupData();
@@ -35,7 +36,9 @@ const ExpenseMain = () => {
           <RightPane />
         </Col>
       </Row>
-      <Button data-testId='share-btn' onClick={handleSharing}>Share</Button>
+      <StyledShareButton data-testId='share-btn' onClick={handleSharing}>
+        <ShareFill />
+      </StyledShareButton>
     </Container>
   )
 }
@@ -91,3 +94,18 @@ const StyledGapRow = styled(Row)`
   padding-top: 100px;
   justify-content: center;
 `;
+
+const StyledShareButton = styled.div`
+  position: fixed;
+  width: 55px;
+  height: 55px;
+  right: 40px;
+  bottom: 45px;
+  border-radius: 50%;
+  background-color: #6B3DA6;
+  filter: drop-shadow(4px, 4px, 6px, rgba(0, 0, 0, 0.25));
+
+  color: #FFFFFF;
+  font-size: 30px;
+  text-align: center;
+`
