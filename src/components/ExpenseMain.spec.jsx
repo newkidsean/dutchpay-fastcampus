@@ -154,16 +154,17 @@ describe('비용 정산 메인 페이지', () => {
       describe('데스크톱에서', () => {
         beforeEach(() => {
           global.navigator.clipboard = {
-            writeText: () => new Promise()
+            writeText: () => new Promise(jest.fn())
           }
         })
         test('클립보드에 링크가 복사된다', async () => {
+          const writeText = jest.spyOn(navigator.clipboard, 'writeText');
           const { shareButton } = renderComponent();
 
           await userEvent.click(shareButton);
 
-          expect(navigator.clipboard.writeText).toBeCalledTimes(1);
-          expect(navigator.clipboard.writeText).toHaveBeenCalledWith(window.location.href)
+          expect(writeText).toBeCalledTimes(1);
+          expect(writeText).toHaveBeenCalledWith(window.location.href)
         })
       })
     })

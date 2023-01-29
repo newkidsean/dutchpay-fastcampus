@@ -1,5 +1,5 @@
 import React from 'react'
-import { Col, Container, Row } from 'react-bootstrap'
+import { Button, Col, Container, Row } from 'react-bootstrap'
 import { useRecoilValue } from 'recoil'
 import styled from 'styled-components'
 import AddExpenseFrom from './AddExpenseFrom'
@@ -12,6 +12,19 @@ import { useGroupData } from '../hooks/useGroupData'
 const ExpenseMain = () => {
   useGroupData();
 
+  const handleSharing = () => {
+    if (navigator.userAgent.match(/iphone|android/i) && navigator.share) {
+      navigator.share({
+        url: window.location.href
+      })
+    } else {
+      navigator.clipboard.writeText(window.location.href)
+        .then(() => {
+          alert('공유 링크가 클립보드에 복사되었습니다.')
+        })
+    }
+  }
+
   return (
     <Container fluid>
       <Row>
@@ -22,6 +35,7 @@ const ExpenseMain = () => {
           <RightPane />
         </Col>
       </Row>
+      <Button data-testId='share-btn' onClick={handleSharing}>Share</Button>
     </Container>
   )
 }
