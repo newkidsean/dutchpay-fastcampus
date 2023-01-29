@@ -21,9 +21,10 @@ const renderComponent = () => {
   const descErrorMessage = screen.getByText('비용 내용을 입력해 주셔야 합니다.');
   const payerErrorMessage = screen.getByText('결제자를 선택해 주셔야 합니다.');
   const amountErrorMessage = screen.getByText('1원 이상의 금액을 입력해 주셔야 합니다.');
+  const shareButton = screen.getByTestId('share-btn');
 
   return {
-    dateInput, descInput, amountInput, payerInput, addButton, descErrorMessage, payerErrorMessage, amountErrorMessage
+    dateInput, descInput, amountInput, payerInput, addButton, descErrorMessage, payerErrorMessage, amountErrorMessage, shareButton
   }
 }
 
@@ -122,6 +123,50 @@ describe('비용 정산 메인 페이지', () => {
 
       const component = screen.getByText(/정산은 이렇게/i);
       expect(component).toBeInTheDocument();
+    })
+  })
+
+  describe('공유 버튼 컴포넌트', () => {
+    test('공유버튼 컴포넌트가 렌더링 되는가?', () => {
+      const { shareButton } = renderComponent();
+
+      expect(shareButton).toBeInTheDocument();
+    })
+
+    describe('공유 버튼 클릭 시', () => {
+
+      describe('모바일에서', () => {
+        beforeEach(() => {
+          global.navigator.share = jest.fn();
+          Object.defineProperty(window.navigator, 'userAgent', {
+            value: 'iPhone'
+          })
+        })
+        test('공유용 다이얼로그가 뜬다', async () => {
+          const { shareButton } = renderComponent();
+
+          await userEvent.click(shareButton);
+
+          expect(navigator.share).toBeCalledTimes(1);
+        })
+
+      })
+      describe('데스크톱에서', () => {
+        beforeEach(() => {
+          global.navigator.clipboard = {
+            writeText: () => new Promise(jest.fn())
+          }
+        })
+        test('클립보드에 링크가 복사된다', async () => {
+          const writeText = jest.spyOn(navigator.clipboard, 'writeText');
+          const { shareButton } = renderComponent();
+
+          await userEvent.click(shareButton);
+
+          expect(writeText).toBeCalledTimes(1);
+          expect(writeText).toHaveBeenCalledWith(window.location.href)
+        })
+      })
     })
   })
 })

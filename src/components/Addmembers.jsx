@@ -1,27 +1,44 @@
 import { InputTags } from "react-bootstrap-tagsinput"
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import CenteredOverlayForm from './shared/CenteredOverlayForm';
 import { groupMembersState } from '../state/groupMembers';
 import React, { useState } from 'react'
 import { Form } from 'react-bootstrap'
-import { groupNameState } from '../state/groupName';
 import styled from 'styled-components'
 import { useNavigate } from "react-router-dom";
-import { ROUTES } from "../routes";
+import { ROUTES, ROUTE_UTILS } from "../routes";
+import { API } from "aws-amplify";
+import { useGroupData } from '../hooks/useGroupData';
 
 const Addmembers = () => {
-  const [groupMembers, setGroupMembers] = useRecoilState(groupMembersState);
-  const groupName = useRecoilValue(groupNameState);
+  const { groupId, groupMembers, groupName } = useGroupData();
+
+  const setGroupMembers = useSetRecoilState(groupMembersState);
   const [validated, setValidated] = useState(false);
   const [groupMembersString, setGroupMembersString] = useState('')
   const navigate = useNavigate();
 
   const TITLE = `${groupName} 그룹에 속한 사함들의 이름을 모두 적어 주세요.`;
 
+  const saveGroupMembers = () => {
+    API.put('groupsApi', `/groups/${groupId}/members`, {
+      body: {
+        members: groupMembers
+      }
+    })
+      .then(_response => {
+        navigate(ROUTE_UTILS.EXPENSE_MAIN(groupId))
+      })
+      .catch(error => {
+        console.log(error.response);
+        alert(error.response.data.error)
+      })
+  }
   const handleSubmit = (event) => {
     event.preventDefault();
     setValidated(true);
     if (groupMembers.length > 0) {
+      saveGroupMembers();
       navigate(`${ROUTES.EXPENSE_MAIN}`)
     }
     //  삼성 인터넷이라 태그가 동작하지 않을 때
